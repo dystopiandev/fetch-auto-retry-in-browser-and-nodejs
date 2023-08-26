@@ -1,3 +1,4 @@
+/***     IMPLEMENTATION    ***/
 async function fetchWithRetry(
   url,
   fetchOptions,
@@ -37,11 +38,15 @@ async function fetchWithRetry(
     const attemptsLeft = maxRetryCount - retryCount;
 
     try {
-      const response = await fetch(url, fetchOptions);
+      const fetchFunc = (globalThis || window).inbuiltFetch || fetch;
+      const response = await fetchFunc(url, fetchOptions);
 
       if (response.ok || exemptedHttpStatusCodes.includes(response.status)) {
         return response;
       }
+
+      finalError = new Error(`HTTP ${response.status} ${response.statusText}`);
+      finalError.response = response;
 
       beforeRetry(attemptsLeft, backoffMs, response, null);
       await asyncSleep(backoffMs);
@@ -59,14 +64,27 @@ async function fetchWithRetry(
   throw finalError;
 }
 
+/***     MONKEY PATCHING     ***/
+// Use the globalThis object if available (Node.js),
+// otherwise use the window object (browser)
+const context = globalThis || window;
+
+// First, keep a copy of the original fetch function
+// our fetchWithRetry function will use this when invoked
+context.inbuiltFetch = (globalThis || window).fetch;
+
+// Replace the global fetch function with the fetchWithRetry function
+(globalThis || window).fetch = fetchWithRetry;
+
+/***     USAGE     ***/
 try {
-  const response = await fetchWithRetry(
+  const response = await fetch(
     "https://jsonplaceholder.typicode.com/posts/1",
     { method: "GET" },
-    15 // maximum retry count
+    15 // maxRetryCount (not available in inbuilt fetch)
   );
 
   console.log("Response:", await response.json());
 } catch (error) {
-  console.error("Error:", error);
+  console.error("Last error:", error);
 }
