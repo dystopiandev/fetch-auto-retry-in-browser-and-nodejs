@@ -81,7 +81,6 @@ try {
   const response = await fetch(
     "https://jsonplaceholder.typicode.com/posts/1",
     { method: "GET" },
-    15 // maxRetryCount (not available in inbuilt fetch)
   );
 
   console.log("Response:", await response.json());
