@@ -1,2 +1,2 @@
-# Automatically Retrying API Calls (JavaScript/Node.js & C#/.NET)
-> Source code used in the article: [Auto-Retrying API Calls Improves UX At No Extra Cost (Demo In JS & C#)](https://broadcrunch.com/technology/computing/improve-ux-by-retrying-api-calls-in-demo-in-nodejs-and-dotnet)
+# Auto-Retry API Calls (Fetch API)
+> Source code used in the article: [Auto-Retrying API Calls Improves UX (Demonstrated In Node.js, Browser)](https://broadcrunch.com/technology/computing/auto-retrying-api-calls-improves-ux-demonstrated-in-node-js-and-browser/)
